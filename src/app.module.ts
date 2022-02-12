@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { config as dotenvconfig } from 'dotenv';
+import { OrdersModule } from './orders/orders.module';
 dotenvconfig();
 
 @Module({
@@ -23,7 +24,7 @@ dotenvconfig();
       migrationsDir: "src/migrations/*.{ts,js}",
     },
     subscribers: ["src/subscribers/**/*.{ts,js}"],
-  }),UsersModule],
+  }),UsersModule, OrdersModule],
   controllers: [AppController],
   providers: [AppService],
 })

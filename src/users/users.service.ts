@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,13 +14,13 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     try {
-      if (await this.findOneByEmail(createUserDto.email)) throw new BadRequestException("Email already in use");
+      if (await this.userRepository.findOne({ where: { email: createUserDto.email } })) throw new Error("Email already in use");
 
       const user = await this.userRepository.create(createUserDto);
       await this.userRepository.save(user);
       return user;
     } catch (error) {
-      throw new BadRequestException("Could not create user");
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -29,18 +29,18 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-    return await this.userRepository.findOne(id);
+    const user = await this.userRepository.findOne(id);
+    if (!user) throw new Error("User not found");
+    return user;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    if (!(await this.findOneByEmail(updateUserDto.email))) throw new BadRequestException("User not found");
-
     try {
       const user = await this.userRepository.findOne(id);
       await this.userRepository.save({ ...user, ...updateUserDto });
       return user;
     } catch (error) {
-      throw new BadRequestException("Could not update user");
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -49,7 +49,7 @@ export class UsersService {
       try {
         return await this.userRepository.delete(id);
       } catch (error) {
-        throw new BadRequestException("Could not delete user");
+        throw new BadRequestException(error.message);
       }
     }
 
@@ -57,6 +57,9 @@ export class UsersService {
   }
 
   async findOneByEmail(email: string) {
-    return await this.userRepository.findOne({ where: { email } });
+    const user = await this.userRepository.findOne({ where: { email } });
+
+    if (!user) throw new Error("User not found");
+    return user;
   }
-}
+  }

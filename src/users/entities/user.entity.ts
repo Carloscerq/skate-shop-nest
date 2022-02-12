@@ -1,5 +1,6 @@
-import { Entity, Column, BeforeInsert, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, BeforeInsert, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { hash } from "bcrypt";
+import { Order } from "../../orders/entities/order.entity";
 
 @Entity()
 export class User {
@@ -23,6 +24,9 @@ export class User {
 
     @Column()
     password: string;
+
+    @OneToMany(() => Order, order => order.user, { onDelete: 'CASCADE' })
+    orders: Order;
 
     @BeforeInsert()
     async hash() {
