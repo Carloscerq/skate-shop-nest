@@ -26,7 +26,7 @@ dotenvconfig();
       migrationsDir: "src/migrations/*.{ts,js}",
     },
     subscribers: ["src/subscribers/**/*.{ts,js}"],
-  }),UsersModule, OrdersModule, ProductsModule ],
+  }),UsersModule, OrdersModule, ProductsModule, AuthModule ],
   controllers: [AppController],
   providers: [AppService],
 })

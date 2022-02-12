@@ -13,11 +13,11 @@ export class UsersService {
   ) { }
 
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
-      if (await this.userRepository.findOne({ where: { email: createUserDto.email } })) throw new BadRequestException("Email already in use");
+    if (await this.userRepository.findOne({ where: { email: createUserDto.email } })) throw new BadRequestException("Email already in use");
 
-      const user = await this.userRepository.create(createUserDto);
-      await this.userRepository.save(user);
-      return user;
+    const user = await this.userRepository.create(createUserDto);
+    await this.userRepository.save(user);
+    return user;
   }
 
   async findAll(): Promise<UserEntity[]> {
@@ -31,14 +31,14 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<UserEntity> {
-      const user = await this.userRepository.findOne(id);
-      await this.userRepository.save({ ...user, ...updateUserDto });
-      return user;
+    const user = await this.userRepository.findOne(id);
+    await this.userRepository.save({ ...user, ...updateUserDto });
+    return user;
   }
 
   async remove(id: string): Promise<DeleteResult> {
     if (await this.findOne(id)) {
-        return await this.userRepository.delete(id);
+      return await this.userRepository.delete(id);
     }
 
     throw new BadRequestException("User not found");
