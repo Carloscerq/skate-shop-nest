@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { config as dotenvconfig } from 'dotenv';
 import { OrdersModule } from './orders/orders.module';
 import { ProductsModule } from './products/products.module';
+import { AuthModule } from './auth/auth.module';
 dotenvconfig();
 
 @Module({
@@ -25,7 +26,7 @@ dotenvconfig();
       migrationsDir: "src/migrations/*.{ts,js}",
     },
     subscribers: ["src/subscribers/**/*.{ts,js}"],
-  }),UsersModule, OrdersModule, ProductsModule],
+  }),UsersModule, OrdersModule, ProductsModule ],
   controllers: [AppController],
   providers: [AppService],
 })
