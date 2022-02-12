@@ -2,20 +2,27 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
+import { ProductsService } from '../products/products.service';
 
 @Controller('orders')
 export class OrdersController {
   constructor(
     private readonly ordersService: OrdersService,
     private readonly usersService: UsersService,
-  ) {}
+    private readonly produtsService: ProductsService,
+  ) { }
 
   @Post()
   async create(@Body() createOrderDto: CreateOrderDto) {
     const user = await this.usersService.findOne(createOrderDto.userId);
+    const product = await this.produtsService.findOne(createOrderDto.productId);
 
-    return this.ordersService.create(createOrderDto, user);
+    await this.produtsService.update(createOrderDto.productId, {
+      amountInStock: product.amountInStock - createOrderDto.amount
+    });
+
+    return this.ordersService.create(createOrderDto, user, product);
   }
 
   @Get()
@@ -34,7 +41,18 @@ export class OrdersController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
+    const order = await this.ordersService.findOne(id);
+
+    await this.produtsService.update(order.product.id, {
+      amountInStock: order.product.amountInStock + order.amount
+    });
+
     return this.ordersService.remove(id);
+  }
+
+  @Get('user/:id')
+  async getOrdersFromClient(@Param('id') id: string) {
+    return await this.ordersService.getOrdersFromClient(await this.usersService.findOne(id));
   }
 }

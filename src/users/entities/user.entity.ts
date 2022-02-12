@@ -26,7 +26,7 @@ export class User {
     password: string;
 
     @OneToMany(() => Order, order => order.user, { onDelete: 'CASCADE' })
-    orders: Order;
+    orders: Order[];
 
     @BeforeInsert()
     async hash() {

@@ -7,4 +7,7 @@ export class CreateOrderDto {
 
     @IsNotEmpty()
     userId: string;
+
+    @IsNotEmpty()
+    productId: string;
 }
