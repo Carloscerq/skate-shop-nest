@@ -47,4 +47,10 @@ export class OrdersService {
   async getOrdersFromClient(user: User): Promise<Order[]> {
     return await this.orderRepository.find({ relations: ['product'], where: { user } });
   }
+
+  async pay(id: string): Promise<Order> {
+    const order = await this.findOne(id);
+    await this.orderRepository.save({ ...order, isPaid: true });
+    return order;
+  }
 }
